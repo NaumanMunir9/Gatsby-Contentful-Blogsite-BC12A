@@ -27,7 +27,9 @@ const query = graphql`
 `;
 
 const Blog = () => {
-  const data = useStaticQuery(query);
+  const {
+    allContentfulBlogPost: { nodes: posts },
+  } = useStaticQuery(query);
 
   return (
     <Layout>
@@ -36,27 +38,26 @@ const Blog = () => {
         <Link to="/">Go back to the homepage</Link>
       </p>
       <ul className="posts">
-        {data.allContentfulBlogPost.nodes.map((item) => {
+        {posts.map((item) => {
+          const { id, slug, title, date, image, excerpt } = item;
           return (
-            <li className="post" key={item.id}>
+            <li className="post" key={id}>
               <h2>
-                <Link to={`/blog/${item.slug}/`}>{item.title}</Link>
+                <Link to={`/blog/${slug}/`}>{title}</Link>
               </h2>
               <div className="meta">
-                <span>Posted on {item.date}</span>
+                <span>Posted on {date}</span>
               </div>
-              {item.image && (
+              {image && (
                 <GatsbyImage
                   className="featured"
-                  image={item.image.gatsbyImageData}
-                  alt={item.title}
+                  image={image.gatsbyImageData}
+                  alt={title}
                 />
               )}
-              <p className="excerpt">
-                {item.excerpt.childMarkdownRemark.excerpt}
-              </p>
+              <p className="excerpt">{excerpt.childMarkdownRemark.excerpt}</p>
               <div className="button">
-                <Link to={`/blog/${item.slug}/`}>Read More</Link>
+                <Link to={`/blog/${slug}/`}>Read More</Link>
               </div>
             </li>
           );
