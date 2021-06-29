@@ -1,37 +1,33 @@
-import React from "react"
-import { useStaticQuery, graphql, Link } from "gatsby"
+import React from "react";
+import { useStaticQuery, graphql, Link } from "gatsby";
 
-import { GatsbyImage } from "gatsby-plugin-image"
-import Layout from "../components/layout"
-import Seo from "../components/seo"
+import { GatsbyImage } from "gatsby-plugin-image";
+import Layout from "../components/layout";
+import Seo from "../components/seo";
 
-const Blog = () => {
-  const data = useStaticQuery(
-    graphql`
-      query {
-        allContentfulBlogPost(sort: { fields: date, order: DESC }) {
-          edges {
-            node {
-              title
-              id
-              slug
-              date(formatString: "Do MMMM, YYYY")
-              image {
-                fluid(maxWidth: 750) {
-                  ...GatsbyContentfulFluid
-                }
-              }
-              excerpt {
-                childMarkdownRemark {
-                  excerpt(pruneLength: 150)
-                }
-              }
-            }
+const query = graphql`
+  {
+    allContentfulBlogPost(sort: { fields: date, order: DESC }) {
+      nodes {
+        id
+        title
+        slug
+        date(formatString: "DD MMMM, YYYY")
+        excerpt {
+          childMarkdownRemark {
+            excerpt(pruneLength: 150)
           }
         }
+        image {
+          gatsbyImageData(layout: CONSTRAINED, placeholder: TRACED_SVG)
+        }
       }
-    `
-  )
+    }
+  }
+`;
+
+const Blog = () => {
+  const data = useStaticQuery(query);
 
   return (
     <Layout>
@@ -40,34 +36,34 @@ const Blog = () => {
         <Link to="/">Go back to the homepage</Link>
       </p>
       <ul className="posts">
-        {data.allContentfulBlogPost.edges.map(edge => {
+        {data.allContentfulBlogPost.nodes.map((item) => {
           return (
-            <li className="post" key={edge.node.id}>
+            <li className="post" key={item.id}>
               <h2>
-                <Link to={`/blog/${edge.node.slug}/`}>{edge.node.title}</Link>
+                <Link to={`/blog/${item.slug}/`}>{item.title}</Link>
               </h2>
               <div className="meta">
-                <span>Posted on {edge.node.date}</span>
+                <span>Posted on {item.date}</span>
               </div>
-              {edge.node.image && (
+              {item.image && (
                 <GatsbyImage
                   className="featured"
-                  image={edge.node.image.fluid}
-                  alt={edge.node.title}
+                  image={item.image.gatsbyImageData}
+                  alt={item.title}
                 />
               )}
               <p className="excerpt">
-                {edge.node.excerpt.childMarkdownRemark.excerpt}
+                {item.excerpt.childMarkdownRemark.excerpt}
               </p>
               <div className="button">
-                <Link to={`/blog/${edge.node.slug}/`}>Read More</Link>
+                <Link to={`/blog/${item.slug}/`}>Read More</Link>
               </div>
             </li>
-          )
+          );
         })}
       </ul>
     </Layout>
-  )
-}
+  );
+};
 
-export default Blog
+export default Blog;
