@@ -1,7 +1,7 @@
 import React from "react";
 import { useStaticQuery, graphql, Link } from "gatsby";
 
-import { GatsbyImage } from "gatsby-plugin-image";
+import { GatsbyImage, getImage } from "gatsby-plugin-image";
 import Layout from "../components/layout";
 import Seo from "../components/seo";
 
@@ -40,10 +40,11 @@ const Blog = () => {
       <ul className="posts">
         {posts.map((item) => {
           const { id, slug, title, date, image, excerpt } = item;
+          const pathToImage = getImage(image);
           return (
             <li className="post" key={id}>
               <h2>
-                <Link to={`/blog/${slug}/`}>{title}</Link>
+                <Link to={`/blog/${slug}`}>{title}</Link>
               </h2>
               <div className="meta">
                 <span>Posted on {date}</span>
@@ -51,13 +52,13 @@ const Blog = () => {
               {image && (
                 <GatsbyImage
                   className="featured"
-                  image={image.gatsbyImageData}
+                  image={pathToImage}
                   alt={title}
                 />
               )}
               <p className="excerpt">{excerpt.childMarkdownRemark.excerpt}</p>
               <div className="button">
-                <Link to={`/blog/${slug}/`}>Read More</Link>
+                <Link to={`/blog/${slug}`}>Read More</Link>
               </div>
             </li>
           );
