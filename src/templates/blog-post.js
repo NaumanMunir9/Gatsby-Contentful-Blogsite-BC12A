@@ -13,13 +13,16 @@ export const query = graphql`
       image {
         gatsbyImageData(layout: CONSTRAINED, placeholder: TRACED_SVG)
       }
+      body {
+        body
+      }
     }
   }
 `;
 
 const BlogPost = (props) => {
   console.log(props);
-  const { title, date, image } = props.data.contentfulBlogPost;
+  const { title, date, image, body } = props.data.contentfulBlogPost;
   const pathToImage = getImage(image);
 
   return (
@@ -32,6 +35,8 @@ const BlogPost = (props) => {
         <span className="meta">Posted on {date}</span>
 
         {image && <GatsbyImage image={pathToImage} alt={title} />}
+
+        {body && body.body}
       </div>
     </Layout>
   );
